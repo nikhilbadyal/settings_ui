@@ -1,0 +1,122 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+} else {
+    throw new FileNotFoundException("Key.properties not found.")
+}
+
+android {
+    compileSdkVersion 30
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+
+    defaultConfig {
+        applicationId "com.example.settings_ui"
+        minSdkVersion 22
+        targetSdkVersion 30
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+    compileOptions {
+
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+        encoding 'utf-8'
+    }
+
+    signingConfigs {
+        file(rootProject.file('key.properties')).with { propFile ->
+            if (propFile.canRead()) {
+                release {
+                    keyAlias keystoreProperties['keyAlias']
+                    keyPassword keystoreProperties['keyPassword']
+                    storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+                    storePassword keystoreProperties['storePassword']
+                }
+            } else {
+                print('not signed')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            file(rootProject.file('key.properties')).with { propFile ->
+                if (propFile.canRead()) {
+                    signingConfig signingConfigs.release
+                }
+            }
+            /* ndk {
+                 abiFilters 'armeabi-v7a', 'arm64-v8a'
+             }*/
+
+            /*applicationVariants.all { variant ->
+                variant.outputs.all { output ->
+                    output.outputFileName = "notes-release.apk"
+                }
+            }*/
+        }
+
+        debug {
+            applicationIdSuffix ".dev"
+            signingConfig signingConfigs.release
+            resValue "string", "app_name", "KeepSettingsDebug"
+        }
+
+        profile {
+            applicationIdSuffix ".profile"
+            signingConfig signingConfigs.release
+            resValue "string", "app_name", "KeepSettingsProfile"
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
