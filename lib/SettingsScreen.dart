@@ -1,12 +1,9 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:keepsettings/keepsettings.dart';
 import 'package:settings_ui/main.dart';
-import 'package:settings_ui/settings/RadioButton.dart';
 import 'package:settings_ui/util/ColorPicker.dart';
-import 'package:settings_ui/settings/SettingSection.dart';
-import 'package:settings_ui/settings/SettingsList.dart';
-import 'package:settings_ui/settings/SettingsTiles.dart';
 
 enum RadioButtonOptions { op1, op2, op3 }
 
