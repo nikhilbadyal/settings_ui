@@ -15,18 +15,20 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool tileManager = true;
+  bool tileManager = settingUI.isDarkMode;
   var initialRadioChoice = RadioButtonOptions.op2;
   var checkBoxManager = true;
   Color? iconColor = Colors.grey[600];
+  double sliderCurVal = 20;
+  var initialValue = 20.0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        shape: BeveledRectangleBorder(),
+        shape: const BeveledRectangleBorder(),
         toolbarHeight: 60,
-        title: Center(child: const Text('Settings UI')),
+        title: const Center(child: Text('Settings UI')),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 10),
@@ -45,9 +47,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           tiles: [
             SettingsTile(
               onPressed: (_) {
-                Navigator.of(context).pop();
+                Navigator.of(context).maybePop();
               },
               title: 'Back to home screen',
+              subtitle: 'Home',
               leading: Icon(CupertinoIcons.back, color: iconColor),
             ),
             SettingsTile(
@@ -61,6 +64,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
               switchActiveColor: Theme.of(context).accentColor,
               switchValue: tileManager,
               onToggle: toggleDarkMode,
+            ),
+          ],
+        ),
+        SliderSection(
+          slider: SliderTile(
+            initialSliderValue: initialValue,
+            onSliderChange: (value) {
+              setState(() {
+                initialValue = value;
+              });
+            },
+            min: 0,
+            max: 100,
+          ),
+          title: 'Study Hours',
+        ),
+        RadioButtonSection(
+          title: 'Subscription',
+          tiles: [
+            RadioButton<RadioButtonOptions>(
+              label: 'Monthly',
+              value: RadioButtonOptions.op1,
+              groupValue: initialRadioChoice,
+              onChanged: onRadioChanged,
+            ),
+            RadioButton<RadioButtonOptions>(
+              label: 'Yearly',
+              value: RadioButtonOptions.op2,
+              groupValue: initialRadioChoice,
+              onChanged: onRadioChanged,
+            ),
+            RadioButton<RadioButtonOptions>(
+              label: 'Life Time',
+              value: RadioButtonOptions.op3,
+              groupValue: initialRadioChoice,
+              onChanged: onRadioChanged,
             ),
           ],
         ),
@@ -83,6 +122,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             SettingsTile.switchTile(
               title: ' Dark Mode',
+              subtitle: 'Save your eyes',
               leading: Icon(CupertinoIcons.cloud_sun, color: iconColor),
               switchActiveColor: Theme.of(context).accentColor,
               switchValue: tileManager,
@@ -93,29 +133,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onChanged: onCheckChanged,
               enabled: checkBoxManager,
               title: 'Slow Down Animations',
-            ),
-          ],
-        ),
-        RadioButtonSection(
-          title: 'Subscription',
-          tiles: [
-            RadioButton(
-              label: 'Monthly',
-              value: RadioButtonOptions.op1,
-              groupValue: initialRadioChoice,
-              onChanged: onRadioChanged,
-            ),
-            RadioButton(
-              label: 'Yearly',
-              value: RadioButtonOptions.op2,
-              groupValue: initialRadioChoice,
-              onChanged: onRadioChanged,
-            ),
-            RadioButton(
-              label: 'Life Time',
-              value: RadioButtonOptions.op3,
-              groupValue: initialRadioChoice,
-              onChanged: onRadioChanged,
             ),
           ],
         ),
@@ -182,13 +199,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  // ignore: avoid_positional_boolean_parameters
   Future<void> toggleDarkMode(bool value) async {
     doSomething(value);
-    settingUI.isDarkMode = value;
-    tileManager = !tileManager;
+    setState(() {
+      settingUI.isDarkMode = !settingUI.isDarkMode;
+      tileManager = !tileManager;
+    });
     settingUI.callSetState();
-
-    // });
   }
 
   Widget languageTrailing() {
@@ -222,6 +240,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  // ignore: avoid_positional_boolean_parameters
   void onTileChanged(bool? value) {
     doSomething(value);
 
@@ -230,6 +249,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  // ignore: avoid_positional_boolean_parameters
   void onCheckChanged(bool? value) {
     doSomething(value);
 
@@ -238,10 +258,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
-  void onRadioChanged(value) {
+  void onRadioChanged(RadioButtonOptions? value) {
     doSomething(value);
     setState(() {
-      initialRadioChoice = value;
+      if (value != null) {
+        initialRadioChoice = value;
+      }
     });
   }
 
@@ -256,8 +278,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 availableColors: appColors,
                 pickerColor: Colors.deepOrangeAccent,
                 onColorChanged: (value) async {
-                  settingUI.uiColor = value;
-                  settingUI.callSetState();
+                  setState(() {
+                    settingUI.uiColor = value;
+                  });
+                  // settingUI.callSetState();
                 },
               ),
             ),
