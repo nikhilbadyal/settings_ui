@@ -127,6 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               switchActiveColor: Theme.of(context).accentColor,
               switchValue: tileManager,
               onToggle: toggleDarkMode,
+              togglerShape: TogglerShapes.Heart,
             ),
             SettingsTile.checkListTile(
               leading: Icon(EvaIcons.clock, color: iconColor),
