@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:keepsettings/keepsettings.dart';
 import 'package:settings_ui/main.dart';
-import 'package:settings_ui/util/ColorPicker.dart';
+import 'package:settings_ui/util/color_picker.dart';
 
 enum RadioButtonOptions { op1, op2, op3 }
 
@@ -18,7 +18,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool tileManager = settingUI.isDarkMode;
   var initialRadioChoice = RadioButtonOptions.op2;
   var checkBoxManager = true;
-  Color? iconColor = Colors.grey[600];
+
+  // Color iconColor = Colors.black;
   double sliderCurVal = 20;
   var initialValue = 20.0;
 
@@ -26,15 +27,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        shape: const BeveledRectangleBorder(),
-        toolbarHeight: 60,
         title: const Center(child: Text('Settings UI')),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 10),
-        child: SafeArea(
-          child: settingsList(),
-        ),
+      body: SafeArea(
+        child: settingsList(),
       ),
     );
   }
@@ -43,27 +39,66 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return SettingsList(
       sections: [
         TilesSection(
-          title: 'General',
+          title: 'Tiles',
           tiles: [
+            SettingsTile(
+              title: 'Language',
+              leading: const Icon(Icons.language),
+              trailing: languageTrailing(),
+            ),
+            SettingsTile.switchTile(
+              title: 'Stop Push Notification',
+              leading: const Icon(CupertinoIcons.bell),
+              switchActiveColor: Theme.of(context).colorScheme.secondary,
+              switchValue: tileManager,
+              onToggle: toggleDarkMode,
+            ),
+            SettingsTile(
+              trailing: const Icon(
+                CupertinoIcons.forward,
+              ),
+              title: 'Primary Color',
+              leading: const Icon(
+                Icons.color_lens_outlined,
+              ),
+              onPressed: (_) {
+                colorPicker(primaryColors, onPrimaryColorChange);
+              },
+            ),
+            SettingsTile(
+              trailing: const Icon(
+                CupertinoIcons.forward,
+              ),
+              title: ' Accent Color',
+              leading: const Icon(
+                Icons.color_lens_outlined,
+              ),
+              onPressed: (_) {
+                colorPicker(accentColors, onAccentColorChange);
+              },
+            ),
+            SettingsTile.switchTile(
+              title: ' Dark Mode',
+              subtitle: 'Save your eyes',
+              leading: const Icon(CupertinoIcons.cloud_sun),
+              switchActiveColor: Theme.of(context).colorScheme.secondary,
+              switchValue: tileManager,
+              onToggle: toggleDarkMode,
+              togglerShape: TogglerShapes.heart,
+            ),
+            SettingsTile.checkListTile(
+              leading: const Icon(EvaIcons.clock),
+              onChanged: onCheckChanged,
+              enabled: checkBoxManager,
+              title: 'Slow Down Animations',
+            ),
             SettingsTile(
               onPressed: (_) {
                 Navigator.of(context).maybePop();
               },
               title: 'Back to home screen',
               subtitle: 'Home',
-              leading: Icon(CupertinoIcons.back, color: iconColor),
-            ),
-            SettingsTile(
-              title: 'Language',
-              leading: Icon(Icons.language, color: iconColor),
-              trailing: languageTrailing(),
-            ),
-            SettingsTile.switchTile(
-              title: 'Stop Push Notification',
-              leading: Icon(CupertinoIcons.bell, color: iconColor),
-              switchActiveColor: Theme.of(context).accentColor,
-              switchValue: tileManager,
-              onToggle: toggleDarkMode,
+              leading: const Icon(CupertinoIcons.back),
             ),
           ],
         ),
@@ -78,10 +113,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             min: 0,
             max: 100,
           ),
-          title: 'Study Hours',
+          title: 'Slider',
         ),
         RadioButtonSection(
-          title: 'Subscription',
+          title: 'Radio Button',
           tiles: [
             RadioButton<RadioButtonOptions>(
               label: 'Monthly',
@@ -103,99 +138,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ],
         ),
-        TilesSection(
-          title: 'UI',
-          tiles: [
-            SettingsTile(
-              trailing: Icon(
-                CupertinoIcons.forward,
-                color: iconColor,
-              ),
-              title: ' Accent Color',
-              leading: Icon(
-                Icons.color_lens_outlined,
-                color: iconColor,
-              ),
-              onPressed: (_) {
-                showPrimaryColorPicker();
-              },
-            ),
-            SettingsTile.switchTile(
-              title: ' Dark Mode',
-              subtitle: 'Save your eyes',
-              leading: Icon(CupertinoIcons.cloud_sun, color: iconColor),
-              switchActiveColor: Theme.of(context).accentColor,
-              switchValue: tileManager,
-              onToggle: toggleDarkMode,
-              togglerShape: TogglerShapes.Heart,
-            ),
-            SettingsTile.checkListTile(
-              leading: Icon(EvaIcons.clock, color: iconColor),
-              onChanged: onCheckChanged,
-              enabled: checkBoxManager,
-              title: 'Slow Down Animations',
-            ),
-          ],
-        ),
-        TilesSection(
-          title: 'Security',
-          tiles: [
-            SettingsTile(
-              title: 'Change Account Password',
-              trailing: Icon(
-                CupertinoIcons.forward,
-                color: iconColor,
-              ),
-              leading: Icon(
-                Icons.lock,
-                color: iconColor,
-              ),
-              onPressed: (_) {
-                showPrimaryColorPicker();
-              },
-            ),
-            SettingsTile(
-              title: 'Change Phone Number',
-              trailing: Icon(
-                CupertinoIcons.forward,
-                color: iconColor,
-              ),
-              leading: Icon(
-                Icons.phone,
-                color: iconColor,
-              ),
-              onPressed: (_) {
-                showPrimaryColorPicker();
-              },
-            ),
-            SettingsTile(
-              title: 'Remove Biometric',
-              trailing: Icon(
-                CupertinoIcons.forward,
-                color: iconColor,
-              ),
-              leading: Icon(
-                Icons.face_unlock_outlined,
-                color: iconColor,
-              ),
-              onPressed: (_) {
-                showPrimaryColorPicker();
-              },
-            ),
-          ],
-        ),
-        TilesSection(
-          title: 'Others',
-          tiles: [
-            SettingsTile.switchTile(
-              title: 'Remind me to code',
-              leading: Icon(CupertinoIcons.book, color: iconColor),
-              switchActiveColor: Theme.of(context).accentColor,
-              switchValue: tileManager,
-              onToggle: toggleDarkMode,
-            ),
-          ],
-        ),
       ],
     );
   }
@@ -212,7 +154,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget languageTrailing() {
     return PopupMenuButton(
-      icon: Icon(Icons.arrow_drop_down, color: Theme.of(context).accentColor),
+      icon: Icon(Icons.arrow_drop_down,
+          color: Theme.of(context).colorScheme.secondary),
       iconSize: 30,
       onSelected: doSomething,
       itemBuilder: (_) => supportedLanguages
@@ -268,7 +211,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
-  Future<void> showPrimaryColorPicker() async {
+  Future<void> colorPicker(List<Color> appColors, onColorChange) async {
     final status = await showDialog(
           barrierDismissible: true,
           context: context,
@@ -278,12 +221,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: ColorPicker(
                 availableColors: appColors,
                 pickerColor: Colors.deepOrangeAccent,
-                onColorChanged: (value) async {
-                  setState(() {
-                    settingUI.uiColor = value;
-                  });
-                  // settingUI.callSetState();
-                },
+                onColorChanged: onColorChange,
               ),
             ),
             actions: <Widget>[
@@ -298,6 +236,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ) ??
         false;
     if (status) {}
+  }
+
+  void onPrimaryColorChange(Color value) {
+    setState(() {
+      settingUI.primaryColor = value;
+    });
+    settingUI.callSetState();
+  }
+
+  void onAccentColorChange(Color value) {
+    setState(() {
+      settingUI.accentColor = value;
+    });
+    settingUI.callSetState();
   }
 }
 
@@ -336,33 +288,39 @@ class MyAlertDialog extends StatelessWidget {
       );
 }
 
-List<Color> appColors = <Color>[
+List<Color> primaryColors = <Color>[
   Colors.red,
-  Colors.redAccent,
   Colors.pink,
-  Colors.pinkAccent,
   Colors.purple,
-  Colors.purpleAccent,
   Colors.deepPurple,
-  Colors.deepPurpleAccent,
-  Colors.indigo,
-  Colors.indigoAccent,
   Colors.blue,
-  Colors.blueAccent,
-  Colors.lightBlue,
+  Colors.indigo,
   Colors.cyan,
   Colors.teal,
-  Colors.green,
-  Colors.lightGreen,
   Colors.orange,
   Colors.deepOrange,
-  Colors.deepOrangeAccent,
+  Colors.amber,
   Colors.brown,
   Colors.grey,
   Colors.blueGrey,
-  const Color(0xFF006270),
-  const Color(0xFFFF7582),
+  Colors.black,
+  /*const Color(0xFF006270),
   const Color(0xFF355C7D),
-  const Color(0xFFF64668),
-  const Color(0xFFfd9400),
+  const Color(0xFFF64668),*/
+];
+
+List<Color> accentColors = <Color>[
+  Colors.redAccent,
+  Colors.pinkAccent,
+  Colors.purpleAccent,
+  Colors.deepPurpleAccent,
+  Colors.blueAccent,
+  Colors.indigoAccent,
+  Colors.cyanAccent,
+  Colors.tealAccent,
+  Colors.orangeAccent,
+  Colors.deepOrangeAccent,
+  Colors.lightBlueAccent,
+  Colors.amberAccent,
+  const Color(0xFFFF7582),
 ];

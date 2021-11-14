@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:settings_ui/SettingsScreen.dart';
-import 'package:settings_ui/util/ThemeData.dart';
+import 'package:settings_ui/settings_screen.dart';
+import 'package:settings_ui/util/theme_data.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,8 +17,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Color uiColor = Colors.deepOrangeAccent;
-  bool isDarkMode = false;
+  Color primaryColor = Colors.blueAccent;
+  Color accentColor = Colors.blueAccent;
+  bool isDarkMode = true;
 
   void callSetState() {
     setState(() {});
@@ -27,10 +28,12 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     settingUI = this;
-    debugPrint(isDarkMode.toString());
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Settings UI',
-      theme: isDarkMode ? blackTheme(uiColor) : lightTheme(uiColor),
+      theme: isDarkMode
+          ? blackTheme(primaryColor, accentColor)
+          : lightTheme(primaryColor, accentColor),
       home: const SettingsScreen(),
     );
   }
