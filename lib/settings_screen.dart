@@ -304,9 +304,6 @@ List<Color> primaryColors = <Color>[
   Colors.grey,
   Colors.blueGrey,
   Colors.black,
-  /*const Color(0xFF006270),
-  const Color(0xFF355C7D),
-  const Color(0xFFF64668),*/
 ];
 
 List<Color> accentColors = <Color>[

@@ -40,7 +40,6 @@ ThemeData blackTheme(Color primaryColor, Color accentColor) =>
       colorScheme:
           ColorScheme.dark(secondary: accentColor, primary: primaryColor),
       cardColor: Colors.black,
-      primaryColor: Colors.black,
       brightness: Brightness.dark,
       primaryColorLight: Colors.black,
       scaffoldBackgroundColor: Colors.black,
